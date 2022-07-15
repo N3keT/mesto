@@ -13,3 +13,9 @@
     cursor: pointer;
     opacity: .6;
 }
+
+@media (max-width: 767px) {
+    .profile__add-button {
+        background-image: url(../../../images/plus-small.svg);
+    }
+}
