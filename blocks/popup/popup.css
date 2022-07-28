@@ -3,7 +3,14 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
     background: rgba(0, 0, 0, .5);
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-property: opacity, height;
+    transition-duration: .5s, 0s;
+    transition-delay: 0s, 1s;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
 }
