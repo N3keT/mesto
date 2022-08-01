@@ -34,7 +34,7 @@ const selectors = {
     profileAbout: '.profile__about',
     popupAbout: '#about',
     submitButton: '.popup__submit-button',
-    list: '.elements__list',
+    listCards: '.elements__list',
     templateElement: '#element',
     elementPlaceName: '.element__place-name',
     elementDel: '.element__delete',
@@ -51,7 +51,8 @@ const selectors = {
     fotoPopup: '#openFoto',
     fotoPopupName: '.popup__foto-name',
     fotoPopupImg: '.popup__foto',
-    fotoPopupClose: '#closeFoto'
+    fotoPopupClose: '#closeFoto',
+    addForm: '#addForm'
 }
 
 const editButton = document.querySelector(selectors.editButton);
@@ -62,7 +63,7 @@ const popupName = document.querySelector(selectors.popupName);
 const profileAbout = document.querySelector(selectors.profileAbout)
 const popupAbout = document.querySelector(selectors.popupAbout);
 const submitButton = document.querySelector(selectors.submitButton);
-const list = document.querySelector(selectors.list);
+const listCards = document.querySelector(selectors.listCards);
 const templateElement = document.querySelector(selectors.templateElement).content.children[0];
 const addPopup = document.querySelector(selectors.addPopup);
 const addButton = document.querySelector(selectors.addButton);
@@ -73,7 +74,8 @@ const addPopupSubmit = document.querySelector(selectors.addPopupSubmit);
 const fotoPopup = document.querySelector(selectors.fotoPopup);
 const fotoPopupName = document.querySelector(selectors.fotoPopupName);
 const fotoPopupImg = document.querySelector(selectors.fotoPopupImg);
-const fotoPopupClose =document.querySelector(selectors.fotoPopupClose);
+const fotoPopupClose = document.querySelector(selectors.fotoPopupClose);
+const addForm = document.querySelector(selectors.addForm);
 
 function createElement(name) {
     const element = templateElement.cloneNode(true);
@@ -81,91 +83,80 @@ function createElement(name) {
     const elementDel = element.querySelector(selectors.elementDel);
     const elementLike = element.querySelector(selectors.elementLike);
     const elementFoto = element.querySelector(selectors.elementFoto);
-    list.append(element);
+    listCards.prepend(element);
     elementPlaceName.textContent = name.name;
     elementFoto.src = name.link;
+    elementFoto.setAttribute('alt', `${elementPlaceName.textContent}`);
     elementDel.addEventListener('click', function(){
         element.remove();
     })
     elementLike.addEventListener('click', function(){
         elementLike.classList.toggle(selectors.elementLikeActive);
     })
-    function openFotoPopup() {
-        fotoPopup.classList.add(selectors.popupIsOpened);
+    elementFoto.addEventListener('click', function() {
+        openPopup(fotoPopup);
         fotoPopupName.textContent = name.name;
         fotoPopupImg.src = name.link;
-    }
-    elementFoto.addEventListener('click', openFotoPopup);
+    });
+
+    return
+}
+
+function renderElement(name) {
+    createElement(name);
 }
 
 initialCards.forEach(createElement);
 
-function openProfilePopup() {
-    profilePopup.classList.add(selectors.popupIsOpened);
-    popupName.value = profileName.textContent;
-    popupAbout.value = profileAbout.textContent;
+function openPopup(popup) {
+    popup.classList.add(selectors.popupIsOpened);
 }
 
-function closeProfilePopup() {
-    profilePopup.classList.remove(selectors.popupIsOpened);
+function closePopup(popup) {
+    popup.classList.remove(selectors.popupIsOpened);
 }
 
-editButton.addEventListener('click', openProfilePopup);
-closeButton.addEventListener('click', closeProfilePopup);
-
-function formSubmitHandler(evt) {
+function formProfileSubmit(evt) {
     evt.preventDefault();
     profileName.textContent = popupName.value;
     profileAbout.textContent = popupAbout.value;
-    closeProfilePopup();
+    closePopup(profilePopup);
 }
 
-submitButton.addEventListener('click', formSubmitHandler);
-profilePopup.addEventListener('submit', formSubmitHandler);
-
-function openAddPopup() {
-    addPopup.classList.add(selectors.popupIsOpened);
-    addPopupName.value = '';
-    addPopupLink.value = '';
+function formAddSubmit(name) {
+    name.preventDefault();
+    name.name = addPopupName.value;
+    name.link = addPopupLink.value;
+    renderElement(name);
+    closePopup(addPopup);
 }
 
-function closeAddPopup() {
-    addPopup.classList.remove(selectors.popupIsOpened);
-}
+editButton.addEventListener('click', function() {
+    openPopup(profilePopup);
+    popupName.value = profileName.textContent;
+    popupAbout.value = profileAbout.textContent;
+});
 
-addButton.addEventListener('click', openAddPopup);
-closeAdd.addEventListener('click', closeAddPopup);
+closeButton.addEventListener('click', function() {
+    closePopup(profilePopup);
+});
 
-function formSubmit(evt) {
-    evt.preventDefault();
-    const element = templateElement.cloneNode(true);
-    const elementPlaceName = element.querySelector(selectors.elementPlaceName);
-    const elementDel = element.querySelector(selectors.elementDel);
-    const elementLike = element.querySelector(selectors.elementLike);
-    const elementFoto = element.querySelector(selectors.elementFoto);
-    list.prepend(element);
-    elementPlaceName.textContent = addPopupName.value;
-    elementFoto.src = addPopupLink.value;
-    elementDel.addEventListener('click', function(){
-        element.remove();
-    })
-    elementLike.addEventListener('click', function(){
-        elementLike.classList.toggle(selectors.elementLikeActive);
-    })
-    closeAddPopup();
-    function openFotoPopup() {
-        fotoPopup.classList.add(selectors.popupIsOpened);
-        fotoPopupName.textContent = elementPlaceName.textContent;
-        fotoPopupImg.src = elementFoto.src;
-    }
-    elementFoto.addEventListener('click', openFotoPopup);
-}
+submitButton.addEventListener('click', formProfileSubmit);
+profilePopup.addEventListener('submit', formProfileSubmit);
 
-addPopupSubmit.addEventListener('click', formSubmit);
-addPopup.addEventListener('submit', formSubmit);
+addButton.addEventListener('click', function() {
+    openPopup(addPopup);
+});
 
-function closeFotoPopup() {
-    fotoPopup.classList.remove(selectors.popupIsOpened);
-}
+closeAdd.addEventListener('click', function() {
+    closePopup(addPopup);
+    addForm.reset();
+});
 
-fotoPopupClose.addEventListener('click', closeFotoPopup);
+addPopupSubmit.addEventListener('click', formAddSubmit);
+addPopup.addEventListener('submit', formAddSubmit);
+
+
+fotoPopupClose.addEventListener('click', function() {
+    closePopup(fotoPopup);
+});
