@@ -97,6 +97,7 @@ function createElement(name) {
         openPopup(fotoPopup);
         fotoPopupName.textContent = name.name;
         fotoPopupImg.src = name.link;
+        fotoPopupImg.alt = name.name;
     });
 
     return
